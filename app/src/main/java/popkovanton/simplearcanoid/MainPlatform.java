@@ -25,7 +25,6 @@ public class MainPlatform {
     public int getBottom() {
         return bottom;
     }
-
     public int getLeft() {
         return left;
     }
