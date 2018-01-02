@@ -2,6 +2,7 @@ package popkovanton.simplearcanoid;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -13,15 +14,25 @@ import popkovanton.simplearcanoid.logic.GameManager;
 
 
 // класс, помогающий рисовать
-public class CanvasView extends View {
+public class CanvasView extends View implements ICanvasView {
     private static int windowWidth;
     private static int windowHeight;
     private GameManager gameManager;
+    private Paint paint;
+    private Canvas canvas;
 
     public CanvasView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initWidthAndHeight(context);
+        initPaint();
         gameManager = new GameManager(this, windowWidth, windowHeight);
+    }
+
+
+    private void initPaint() { // инициализация кисти для рисования
+        paint = new Paint();
+        paint.setAntiAlias(true); //сглаживание
+        paint.setStyle(Paint.Style.FILL); //заливка
     }
 
     private void initWidthAndHeight(Context context) { //узнаем размер окна
@@ -36,6 +47,12 @@ public class CanvasView extends View {
     @Override
     protected void onDraw(Canvas canvas) { //запускается при вызове CanvasView
         super.onDraw(canvas);
-        gameManager.onDraw(canvas);
+        this.canvas = canvas;
+        gameManager.onDraw();
+    }
+
+    @Override
+    public void drawPlatform(MainPlatform platform) {
+        canvas.drawRect(platform.getLeft(), platform.getTop(), platform.getRight(), platform.getBottom(), paint);
     }
 }
