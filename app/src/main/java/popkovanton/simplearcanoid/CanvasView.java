@@ -4,12 +4,19 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import popkovanton.simplearcanoid.logic.GameManager;
 
@@ -21,14 +28,14 @@ public class CanvasView extends View implements ICanvasView {
     private GameManager gameManager;
     private Paint paint;
     private Canvas canvas;
+    Timer myTimer;
 
     public CanvasView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initWidthAndHeight(context);
         initPaint();
-        gameManager = new GameManager(this, windowWidth, windowHeight);
+        initCircleLoop();
     }
-
 
     private void initPaint() { // инициализация кисти для рисования
         paint = new Paint();
@@ -54,7 +61,14 @@ public class CanvasView extends View implements ICanvasView {
 
     @Override
     public void drawPlatform(MainPlatform platform) {
+        paint.setColor(platform.getColor());
         canvas.drawRect(platform.getLeft(), platform.getTop(), platform.getRight(), platform.getBottom(), paint);
+    }
+
+    @Override
+    public void drawCircle(SimpleCircle circle) {
+        paint.setColor(circle.getColor());
+        canvas.drawCircle(circle.getX(), circle.getY(), circle.getRadius(), paint);
     }
 
     @Override
@@ -67,4 +81,40 @@ public class CanvasView extends View implements ICanvasView {
         invalidate(); // перерисовка view element
         return true;
     }
+
+    private void initCircleLoop() { // движение круга в потоке
+        myTimer = new Timer(); // Создаем таймер
+        final Handler uiHandler = new Handler();
+        gameManager = new GameManager(this, windowWidth, windowHeight);
+        myTimer.schedule(new TimerTask() { // Определяем задачу
+            @Override
+            public void run() {
+                uiHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        gameManager.moveCircle();
+                        invalidate();
+                    }
+                });
+            };
+        }, 0L, 60L);
+    }
+
+/*
+    public void getLoop() {
+        new loop().execute();
+    }
+
+    class loop extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            while (true) {
+                gameManager.moveCircle();
+                invalidate();
+                SystemClock.sleep(500);
+            }
+        }
+    }
+    */
 }
