@@ -3,9 +3,9 @@ package popkovanton.simplearcanoid.logic;
 
 import android.util.Log;
 
-import popkovanton.simplearcanoid.CanvasView;
-import popkovanton.simplearcanoid.MainPlatform;
-import popkovanton.simplearcanoid.SimpleCircle;
+import popkovanton.simplearcanoid.view.CanvasView;
+import popkovanton.simplearcanoid.data.MainPlatform;
+import popkovanton.simplearcanoid.data.SimpleCircle;
 
 public class GameManager  {
     private static final String TAG = "touch";
@@ -21,8 +21,6 @@ public class GameManager  {
         height = windowHeight;
         initMainPlatform();
         initSimpleCircle();
-        //moveCircle();
-       // checkCollision();
     }
 
 
@@ -35,7 +33,7 @@ public class GameManager  {
     }
 
     private void initMainPlatform() {
-        mainPlatform = new MainPlatform((width / 2) - 100, (width / 2) + 100, height - 300, height - 290);
+        mainPlatform = new MainPlatform((width / 2) - 100, (width / 2) + 100, height - 200, height - 190);
     }
 
     private void initSimpleCircle() {
@@ -49,19 +47,18 @@ public class GameManager  {
 
     public void onTouchEvent(int x, int y) {
         mainPlatform.moveMainPlatformWhenTouchAt(x, y);
-        //checkCollision();
-        //moveCircle();
     }
 
-    public void checkCollision() { //проверка прикосновения к платформе
+    private void checkCollision() { //проверка прикосновения к платформе
         if (mainPlatform.isIntersect(simpleCircle)) {
-            simpleCircle.checkPlatformBound(mainPlatform.getTop(), mainPlatform.getBottom(), mainPlatform.getLeft(), mainPlatform.getRight(), simpleCircle.getX(), simpleCircle.getY());
             Log.d(TAG, "ПРИКОСНОВЕНИЕ К ПЛАТФОРМЕ");
+            simpleCircle.checkPlatformBound();
         }
     }
 
     public void moveCircle() {
         simpleCircle.moveOneStep();
+        checkCollision();
     }
 
 }
