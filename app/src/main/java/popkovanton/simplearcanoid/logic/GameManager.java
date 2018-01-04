@@ -1,18 +1,14 @@
 package popkovanton.simplearcanoid.logic;
 
 
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.SystemClock;
 import android.util.Log;
 
 import popkovanton.simplearcanoid.CanvasView;
 import popkovanton.simplearcanoid.MainPlatform;
 import popkovanton.simplearcanoid.SimpleCircle;
 
-public class GameManager {
-    private static final String TAG = "myLogs";
+public class GameManager  {
+    private static final String TAG = "touch";
     private MainPlatform mainPlatform;
     private SimpleCircle simpleCircle;
     private CanvasView canvasView;
@@ -24,8 +20,9 @@ public class GameManager {
         width = windowWidth;
         height = windowHeight;
         initMainPlatform();
-        initSimpleCirlce();
-        moveCircle();
+        initSimpleCircle();
+        //moveCircle();
+       // checkCollision();
     }
 
 
@@ -38,12 +35,10 @@ public class GameManager {
     }
 
     private void initMainPlatform() {
-        Log.d(TAG, "ширина равна " + width);
-        Log.d(TAG, "высота равна " + height);
-        mainPlatform = new MainPlatform((width / 2) - 100, (width / 2) + 100, height - 300, height - 250);
+        mainPlatform = new MainPlatform((width / 2) - 100, (width / 2) + 100, height - 300, height - 290);
     }
 
-    private void initSimpleCirlce() {
+    private void initSimpleCircle() {
         simpleCircle = new SimpleCircle(width / 2, height / 2, SimpleCircle.CIRCLE_RADIUS, SimpleCircle.CIRCLE_SPEED, SimpleCircle.CIRCLE_SPEED);
     }
 
@@ -54,24 +49,19 @@ public class GameManager {
 
     public void onTouchEvent(int x, int y) {
         mainPlatform.moveMainPlatformWhenTouchAt(x, y);
+        //checkCollision();
         //moveCircle();
     }
 
-    public void moveCircle() {
-            //simpleCircle.moveOneStep();
-            simpleCircle.moveOneStep();
+    public void checkCollision() { //проверка прикосновения к платформе
+        if (mainPlatform.isIntersect(simpleCircle)) {
+            simpleCircle.checkPlatformBound(mainPlatform.getTop(), mainPlatform.getBottom(), mainPlatform.getLeft(), mainPlatform.getRight(), simpleCircle.getX(), simpleCircle.getY());
+            Log.d(TAG, "ПРИКОСНОВЕНИЕ К ПЛАТФОРМЕ");
+        }
     }
 
+    public void moveCircle() {
+        simpleCircle.moveOneStep();
+    }
 
-/*class ProgressTask extends Thread {
-        public Handler mHandler;
-        @Override
-        public void run() {
-            Looper.prepare();
-            mHandler = new Handler() {
-
-            }
-            Looper.loop();
-        }
-    }*/
 }

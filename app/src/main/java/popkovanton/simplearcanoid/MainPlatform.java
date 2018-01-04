@@ -57,4 +57,9 @@ public class MainPlatform {
         left += dx;
     }
 
+    public boolean isIntersect(SimpleCircle simpleCircle) {  // велосипедное пересечение
+        if ((simpleCircle.getY() >= getTop()) && (simpleCircle.getY() <= getBottom()) && (simpleCircle.getX() >= getLeft()) && (simpleCircle.getX() <= getRight())) {
+            return true;
+        } else return false;
+    }
 }

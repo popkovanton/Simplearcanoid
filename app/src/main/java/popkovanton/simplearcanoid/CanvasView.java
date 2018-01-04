@@ -93,28 +93,11 @@ public class CanvasView extends View implements ICanvasView {
                     @Override
                     public void run() {
                         gameManager.moveCircle();
+                        gameManager.checkCollision();
                         invalidate();
                     }
                 });
             };
         }, 0L, 60L);
     }
-
-/*
-    public void getLoop() {
-        new loop().execute();
-    }
-
-    class loop extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            while (true) {
-                gameManager.moveCircle();
-                invalidate();
-                SystemClock.sleep(500);
-            }
-        }
-    }
-    */
 }
